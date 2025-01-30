@@ -1,0 +1,35 @@
+name: Release CSM-Replication
+# Invocable as a reusable workflow
+# Can be manually triggered
+on:  # yamllint disable-line rule:truthy
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      option:
+        description: 'Select version to release'
+        required: true
+        type: choice
+        default: 'minor'
+        options:
+          - major
+          - minor
+          - patch
+      replicatorCheckInput:
+          description: 'Release dell-csi-replicator Image'
+          type: boolean
+          default: false
+          required: false
+      controllerCheckInput:
+          description: 'Release dell-replication-controller Image'
+          type: boolean
+          default: false
+          required: false
+jobs:
+  csm-release:
+    uses: dell/common-github-actions/.github/workflows/csm-release-driver-module.yaml@feature/release-creator
+    name: Release CSM Drivers and Modules
+    with:
+      version: ${{ github.event.inputs.option }}
+    #   images: ${{ github.event.inputs.replicatorCheckInput: == 'true' && 'csi-powermax,csipowermax-reverseproxy' || 'csi-powermax' }}
+      images: "dell-replication-controller"
+    secrets: inherit

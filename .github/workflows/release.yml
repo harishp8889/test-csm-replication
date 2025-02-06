@@ -14,21 +14,16 @@ on:  # yamllint disable-line rule:truthy
           - major
           - minor
           - patch
-      replicatorCheckInput:
-          description: 'Release dell-csi-replicator Image'
-          type: boolean
-          default: false
-          required: false
-      controllerCheckInput:
-          description: 'Release dell-replication-controller Image'
-          type: boolean
-          default: false
-          required: false
+      images:
+        description: 'Image names to be released. Example: dell-replication-controller,dell-csi-replicator'
+        default: 'dell-replication-controller,dell-csi-replicator'
+        required: true
 jobs:
   csm-release:
     uses: harishp8889/test-common-github-actions/.github/workflows/csm-release-driver-module.yaml@main
+    # uses: ./../test-common-github-actions/.github/workflows/csm-release-driver-module.yaml
     name: Release CSM Drivers and Modules
     with:
       version: ${{ github.event.inputs.option }}
-      images: ${{ github.event.inputs.controllerCheckInput == 'true' && 'dell-replication-controller' || github.event.inputs.replicatorCheckInput == 'true' && 'dell-csi-replicator' }}
+      images: ${{ github.event.inputs.images }}
     secrets: inherit
